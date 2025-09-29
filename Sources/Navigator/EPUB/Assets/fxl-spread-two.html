@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+  body, html {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    background: transparent;
+    overflow: hidden;
+  }
+
+  .viewport {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+  }
+
+  #viewport-left {
+    left: 0;
+  }
+
+  #viewport-right {
+    right: 0;
+  }
+
+  #viewport-center {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .page {
+    /* Centers vertically the iframe */
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+
+    width: 0px;
+    height: 0px;
+    border: none;
+    background: white;
+  }
+
+  #page-left {
+    right: 0;
+  }
+
+  #page-right {
+    left: 0;
+  }
+
+  #page-center {
+    /* Centers vertically and horizontally the iframe */
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  </style>
+
+  <meta name="viewport" content="">
+</head>
+
+<body>
+  <div id="viewport-left" class="viewport">
+    <iframe id="page-left" class="page" scrolling="no"></iframe>
+  </div>
+  <div id="viewport-right" class="viewport">
+    <iframe id="page-right" class="page" scrolling="no"></iframe>
+  </div>
+  <div id="viewport-center" class="viewport">
+    <iframe id="page-center" class="page" scrolling="no"></iframe>
+  </div>
+  
+  <script type="text/javascript" src="{{ASSETS_URL}}/scripts/readium-fixed-wrapper-two.js"></script>
+</body>
+</html>

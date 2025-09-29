@@ -1,0 +1,33 @@
+{
+  "name": "readium-js",
+  "description": "A set of scripts for the EPUB navigator",
+  "author": "Readium Foundation",
+  "version": "0.1.0",
+  "license": "BSD-3-Clause",
+  "private": true,
+  "scripts": {
+    "bundle": "webpack",
+    "lint": "eslint src",
+    "checkformat": "prettier --check '**/*.js'",
+    "format": "prettier --list-different --write '**/*.js'"
+  },
+  "browserslist": [
+    "iOS 13"
+  ],
+  "devDependencies": {
+    "@babel/core": "^7.23.9",
+    "@babel/preset-env": "^7.23.9",
+    "babel-loader": "^8.3.0",
+    "eslint": "^7.32.0",
+    "prettier": "2.3.1",
+    "webpack": "^5.90.1",
+    "webpack-cli": "^5.1.4"
+  },
+  "dependencies": {
+    "@juggle/resize-observer": "^3.4.0",
+    "approx-string-match": "^1.1.0",
+    "css-selector-generator": "^3.6.6",
+    "string.prototype.matchall": "^4.0.10"
+  },
+  "packageManager": "pnpm@8.15.1"
+}
