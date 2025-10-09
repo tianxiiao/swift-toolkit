@@ -24,7 +24,8 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", from: "1.8.0"),
-//        .package(url: "https://github.com/marmelroy/Zip.git", from: "2.1.0"),
+        .package(path: "/Users/nhn/Desktop/GitLab/Zip"),
+//        .package(url: "https://github.com/tianxiiao/Zip.git", from: "2.1.2"),
         .package(url: "https://github.com/ra1028/DifferenceKit.git", from: "1.3.0"),
         .package(url: "https://github.com/readium/Fuzi.git", from: "4.0.0"),
         .package(url: "https://github.com/readium/GCDWebServer.git", from: "4.0.0"),
@@ -38,7 +39,7 @@ let package = Package(
             dependencies: [
                 "ReadiumInternal",
                 "SwiftSoup",
-//                "Zip",
+                "Zip",
                 .product(name: "ReadiumFuzi", package: "Fuzi"),
                 .product(name: "ReadiumZIPFoundation", package: "ZIPFoundation"),
             ],

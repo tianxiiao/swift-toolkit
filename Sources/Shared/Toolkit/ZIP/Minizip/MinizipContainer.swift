@@ -163,7 +163,7 @@ private final class MinizipFile {
     private var bufferLength: Int { 1024 * 32 }
 
     init?(url: URL) {
-        guard let file = unzOpen64(url.path) else {
+        guard let file = x_unzOpen64(url.path) else {
             return nil
         }
         self.file = file
@@ -178,14 +178,14 @@ private final class MinizipFile {
             return
         }
         try closeEntry()
-        try execute { unzClose(file) }
+        try execute { x_unzClose(file) }
         isClosed = true
     }
 
     /// Moves offset to the first entry in the archive.
     func goToFirstEntry() throws {
         try closeEntry()
-        try execute { unzGoToFirstFile(file) }
+        try execute { x_unzGoToFirstFile(file) }
     }
 
     /// Moves offset to the next entry in the archive.
@@ -194,7 +194,7 @@ private final class MinizipFile {
     func goToNextEntry() throws -> Bool {
         try closeEntry()
 
-        let status = unzGoToNextFile(file)
+        let status = x_unzGoToNextFile(file)
         switch status {
         case UNZ_END_OF_LIST_OF_FILE:
             return false
@@ -208,7 +208,7 @@ private final class MinizipFile {
     /// Moves the offset to the entry at `path`.
     func goToEntry(at path: String) throws {
         try closeEntry()
-        try execute { unzLocateFile(file, path.removingPrefix("/"), nil) }
+        try execute { x_unzLocateFile(file, path.removingPrefix("/"), nil) }
     }
 
     /// Reads the metadata of the entry at the current offset in the archive.
@@ -220,7 +220,7 @@ private final class MinizipFile {
             free(filename)
         }
         memset(&fileInfo, 0, MemoryLayout<unz_file_info64>.size)
-        try execute { unzGetCurrentFileInfo64(file, &fileInfo, filename, UInt(filenameMaxSize), nil, 0, nil, 0) }
+        try execute { x_unzGetCurrentFileInfo64(file, &fileInfo, filename, UInt(filenameMaxSize), nil, 0, nil, 0) }
         let path = String(cString: filename)
 
         if path.hasSuffix("/") {
@@ -242,7 +242,7 @@ private final class MinizipFile {
 
         } else {
             try goToEntry(at: path)
-            try execute { unzOpenCurrentFile(file) }
+            try execute { x_unzOpenCurrentFile(file) }
             openedEntry = (path: path, offset: 0)
             try seek(by: offset)
         }
@@ -254,7 +254,7 @@ private final class MinizipFile {
             return
         }
         openedEntry = nil
-        try execute { unzCloseCurrentFile(file) }
+        try execute { x_unzCloseCurrentFile(file) }
     }
 
     /// Advances the current position in the archive by the given `offset`.
@@ -302,7 +302,7 @@ private final class MinizipFile {
         while totalBytesRead < length {
             let bytesToRead = min(UInt64(bufferLength), length - totalBytesRead)
             var buffer = [CUnsignedChar](repeating: 0, count: Int(bytesToRead))
-            let bytesRead = UInt64(unzReadCurrentFile(file, &buffer, UInt32(bytesToRead)))
+            let bytesRead = UInt64(x_unzReadCurrentFile(file, &buffer, UInt32(bytesToRead)))
             if bytesRead == 0 {
                 break
             }
