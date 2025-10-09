@@ -214,12 +214,12 @@ private final class MinizipFile {
     /// Reads the metadata of the entry at the current offset in the archive.
     func entryMetadataAtCurrentOffset() throws -> Entry {
         let filenameMaxSize = 1024
-        var fileInfo = unz_file_info64()
+        var fileInfo = x_unz_file_info64()
         let filename = UnsafeMutablePointer<CChar>.allocate(capacity: filenameMaxSize)
         defer {
             free(filename)
         }
-        memset(&fileInfo, 0, MemoryLayout<unz_file_info64>.size)
+        memset(&fileInfo, 0, MemoryLayout<x_unz_file_info64>.size)
         try execute { x_unzGetCurrentFileInfo64(file, &fileInfo, filename, UInt(filenameMaxSize), nil, 0, nil, 0) }
         let path = String(cString: filename)
 
