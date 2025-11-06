@@ -252,35 +252,46 @@ final class PaginationView: UIView, Loggable {
         await view.go(to: location)
         await loadNextPage()
     }
-    public func currentPages() -> Int{
+    public func currentPages(isScroll:Bool) -> Int{
         var count = 0
+        
         for index in loadedViews.keys.sorted() {
             if let view = loadedViews[index] {
-                if let spreadView = view as? EPUBSpreadView, index < currentIndex {
-                    count += Int(ceil(spreadView.scrollView.contentSize.width / spreadView.scrollView.bounds.width))
-                } else if let spreadView = view as? EPUBSpreadView, index == currentIndex {
-                    count += Int(ceil(spreadView.scrollView.contentOffset.x / spreadView.scrollView.bounds.width))
-                    return count+1
+                if let spreadView = view as? EPUBSpreadView {
+                    let pages = isScroll ? spreadView.scrollView.contentSize.height : spreadView.scrollView.contentSize.width
+                    let page = isScroll ? spreadView.scrollView.bounds.height : spreadView.scrollView.bounds.width
+                    let pageindex = isScroll ? spreadView.scrollView.contentOffset.y : spreadView.scrollView.contentOffset.x
+                    if index < currentIndex {
+                        count += Int(ceil(pages / page))
+                    } else if index == currentIndex {
+                        count += Int(ceil(pageindex / page))
+                        return count+1
+                    }
                 }
             }
         }
         return count
     }
-    public func totalPages() -> Int{
+    public func totalPages(isScroll:Bool) -> Int{
         var count = 0
         for (index, view) in loadedViews {
             if let spreadView = view as? EPUBSpreadView {
-                count += Int(ceil(spreadView.scrollView.contentSize.width / spreadView.scrollView.bounds.width))
+                let pages = isScroll ? spreadView.scrollView.contentSize.height : spreadView.scrollView.contentSize.width
+                let page = isScroll ? spreadView.scrollView.bounds.height : spreadView.scrollView.bounds.width
+                count += Int(ceil(pages / page))
             }
         }
         return count
     }
-    public func futureView(index:Int) -> (Int,EPUBSpreadView)?{
+    public func futureView(index:Int,isScroll:Bool) -> (Int,EPUBSpreadView)?{
         var cureentIndex = index
         for index in loadedViews.keys.sorted() {
             if let view = loadedViews[index] {
                 if let spreadView = view as? EPUBSpreadView {
-                    let count = cureentIndex - Int(ceil(spreadView.scrollView.contentSize.width / spreadView.scrollView.bounds.width))
+                    let pages = isScroll ? spreadView.scrollView.contentSize.height : spreadView.scrollView.contentSize.width
+                    let page = isScroll ? spreadView.scrollView.bounds.height : spreadView.scrollView.bounds.width
+                    let pageindex = isScroll ? spreadView.scrollView.contentOffset.y : spreadView.scrollView.contentOffset.x
+                    let count = cureentIndex - Int(ceil(pages / page))
                     if count <= 0  {
                         setCurrentIndex(index,location: .start)
                         return (cureentIndex - 1,spreadView)
