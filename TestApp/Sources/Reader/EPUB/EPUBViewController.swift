@@ -29,10 +29,26 @@ class EPUBViewController: VisualReaderViewController<EPUBNavigatorViewController
         initialPreferences: EPUBPreferences,
         preferencesStore: AnyUserPreferencesStore<EPUBPreferences>,
         httpServer: HTTPServer
-    ) throws {
+    ) async throws {
         var templates = HTMLDecorationTemplate.defaultTemplates()
-        templates[.pageList] = .pageList
+//        if let style = try? await EPUBViewController.extractKTBGStyle(from: publication) {
+//            templates[.fixed] = .fixed(with:style)
+//        }
+        templates[.fixed] = .fixed(with: """
+        
+        :root[style*="--USER__backgroundColor"] body{
+            background-color: var(--USER__backgroundColor) !important
+        }
+        
+        :root[style*="--USER__textColor"] body :is(p, div, span, h1, h2, h3, h4, h5, h6):not([class]) {
+          color: var(--USER__textColor) ;
+        }
 
+        :root[style*="--USER__textColor"] body :is(.title) {
+          color: var(--USER__textColor) ;
+        }
+        """)
+        
         let resources = FileURL(url: Bundle.main.resourceURL!)!
         let navigator = try EPUBNavigatorViewController(
             publication: publication,
@@ -44,6 +60,7 @@ class EPUBViewController: VisualReaderViewController<EPUBNavigatorViewController
                         title: "Highlight",
                         action: #selector(highlightSelection)
                     )),
+                disablePageTurnsWhileScrolling: true,
                 decorationTemplates: templates,
                 fontFamilyDeclarations: [
                     CSSFontFamilyDeclaration(
@@ -86,7 +103,10 @@ class EPUBViewController: VisualReaderViewController<EPUBNavigatorViewController
                 }
             )
             let vc = UIHostingController(rootView: userPrefs)
-            vc.modalPresentationStyle = .formSheet
+            if let sheet = vc.sheetPresentationController {
+                sheet.detents = [.medium()]
+            }
+            vc.modalPresentationStyle = .overFullScreen
             present(vc, animated: true)
         }
     }
@@ -159,10 +179,55 @@ extension EPUBViewController: EPUBNavigatorDelegate {
     func navigator(_ navigator: Navigator, shouldNavigateToNoteAt link: ReadiumShared.Link, content: String, referrer: String?) -> Bool {
         presentFootnote(content: content, referrer: referrer)
     }
+    func navigator(_ navigator: EPUBNavigatorViewController, setupUserScripts userContentController: WKUserContentController) {
+
+    }
 }
 
 extension EPUBViewController: UIGestureRecognizerDelegate {
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         true
+    }
+}
+
+extension EPUBViewController{
+    static func extractKTBGStyle(from publication: Publication) async throws -> String? {
+        var allStyles = ""
+        let cssLinks = publication.resources.filter { $0.href.hasSuffix(".css") == true }
+        
+        for link in cssLinks {
+            guard let resource = try? await publication.get(link) else { continue }
+            let result = try await resource.read()
+            guard case .success(let data) = result else { continue }
+            guard let cssText = String(data: data, encoding: .utf8) else { continue }
+
+            let regex = try NSRegularExpression(pattern: "\\.(ktbg|kt1|kt2)\\s*\\{[^\\}]+\\}")
+            let matches = regex.matches(in: cssText, range: NSRange(cssText.startIndex..., in: cssText))
+
+            for match in matches {
+                if let range = Range(match.range, in: cssText) {
+                    var styleBlock = String(cssText[range])
+                        .replacingOccurrences(of: #"background-color\s*:\s*([^;]+);"#,
+                                                                  with: #"background-color: $1 !important;"#,
+                                                                  options: .regularExpression)
+                    let colorRegex = #"(?<!background-)color\s*:\s*([^;]+);"#
+                    if styleBlock.range(of: colorRegex, options: .regularExpression) != nil {
+                        styleBlock = styleBlock.replacingOccurrences(
+                            of: colorRegex,
+                            with: #"color: $1 !important;"#,
+                            options: .regularExpression
+                        )
+                    } else {
+                        if let lastBrace = styleBlock.lastIndex(of: "}") {
+                            styleBlock.insert(contentsOf: "    color: #000000 !important;\n", at: lastBrace)
+                        }
+                    }
+                    
+                    allStyles += styleBlock + "\n"
+                }
+            }
+        }
+
+        return allStyles
     }
 }

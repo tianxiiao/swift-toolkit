@@ -197,7 +197,20 @@ final class EPUBReflowableSpreadView: EPUBSpreadView {
 
         return true
     }
+    override func go(indexTo index: Int, options: NavigatorGoOptions) async -> Bool {
+        let offsetX = scrollView.bounds.width * CGFloat(index)
+        var newOffset = scrollView.contentOffset
+        newOffset.x = offsetX
+        guard 0 ..< scrollView.contentSize.width ~= newOffset.x else {
+            return false
+        }
 
+        scrollView.setContentOffset(newOffset, animated: options.animated)
+        
+        try? await Task.sleep(seconds: 0.3)
+
+        return true
+    }
     // Location to scroll to in the resource once the page is loaded.
     private var pendingLocation: PageLocation = .start
 

@@ -375,6 +375,7 @@ extension Decoration.Style.Id {
     ///
     /// This is an example of a custom Decoration Style ID declaration.
     static let pageList: Decoration.Style.Id = "page_list"
+    static let fixed: Decoration.Style.Id = "fixed"
 }
 
 struct PageListConfig: Hashable {
@@ -383,6 +384,15 @@ struct PageListConfig: Hashable {
 }
 
 extension HTMLDecorationTemplate {
+    static func fixed(with style: String) -> HTMLDecorationTemplate {
+
+        return HTMLDecorationTemplate(
+            layout: .bounds,
+            width: .page,
+            element: { _ in "" },
+            stylesheet: "\(style)"
+        )
+    }
     /// Concrete implementation of the `pageList` decoration style for
     /// HTML-based navigators, such as the `EPUBNavigatorViewController`.
     ///

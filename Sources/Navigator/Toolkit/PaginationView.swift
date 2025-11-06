@@ -252,6 +252,45 @@ final class PaginationView: UIView, Loggable {
         await view.go(to: location)
         await loadNextPage()
     }
+    public func currentPages() -> Int{
+        var count = 0
+        for index in loadedViews.keys.sorted() {
+            if let view = loadedViews[index] {
+                if let spreadView = view as? EPUBSpreadView, index < currentIndex {
+                    count += Int(ceil(spreadView.scrollView.contentSize.width / spreadView.scrollView.bounds.width))
+                } else if let spreadView = view as? EPUBSpreadView, index == currentIndex {
+                    count += Int(ceil(spreadView.scrollView.contentOffset.x / spreadView.scrollView.bounds.width))
+                    return count+1
+                }
+            }
+        }
+        return count
+    }
+    public func totalPages() -> Int{
+        var count = 0
+        for (index, view) in loadedViews {
+            if let spreadView = view as? EPUBSpreadView {
+                count += Int(ceil(spreadView.scrollView.contentSize.width / spreadView.scrollView.bounds.width))
+            }
+        }
+        return count
+    }
+    public func futureView(index:Int) -> (Int,EPUBSpreadView)?{
+        var cureentIndex = index
+        for index in loadedViews.keys.sorted() {
+            if let view = loadedViews[index] {
+                if let spreadView = view as? EPUBSpreadView {
+                    let count = cureentIndex - Int(ceil(spreadView.scrollView.contentSize.width / spreadView.scrollView.bounds.width))
+                    if count <= 0  {
+                        setCurrentIndex(index,location: .start)
+                        return (cureentIndex - 1,spreadView)
+                    }
+                    cureentIndex = count
+                }
+            }
+        }
+        return nil
+    }
 
     /// Queue views to be loaded until reaching the given number of pre-loaded positions.
     ///

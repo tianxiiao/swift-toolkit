@@ -493,21 +493,21 @@ body {
 
    Repo: https://github.com/readium/readium-css */
 
-:root[style*="--USER__backgroundColor"] {
-  background-color: var(--USER__backgroundColor) !important;
-}
-
-:root[style*="--USER__backgroundColor"] * {
-  background-color: transparent ;
-}
-
-:root[style*="--USER__textColor"] {
-  color: var(--USER__textColor) !important;
-}
-
-:root[style*="--USER__textColor"] *:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not(pre) {
-  color: inherit;
-}
+/*:root[style*="--USER__backgroundColor"] {*/
+/*  background-color: var(--USER__backgroundColor) !important;*/
+/*}*/
+/**/
+/*:root[style*="--USER__backgroundColor"] * {*/
+/*  background-color: transparent ;*/
+/*}*/
+/**/
+/*:root[style*="--USER__textColor"] {*/
+/*  color: var(--USER__textColor) !important;*/
+/*}*/
+/**/
+/*:root[style*="--USER__textColor"] *:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not(pre) {*/
+/*  color: inherit;*/
+/*}*/
 
 /* Readium CSS
    Text align pref

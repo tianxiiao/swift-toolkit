@@ -514,7 +514,18 @@ open class EPUBNavigatorViewController: InputObservableViewController,
     private var currentSpreadIndex: Int {
         paginationView?.currentIndex ?? 0
     }
-
+    public func getCurrentSpreadIndex() -> Int{
+        return paginationView?.currentPages() ?? 0
+    }
+    public func getSpreadCound() -> Int{
+        return paginationView?.totalPages() ?? 0
+    }
+    public func spreadMoveTo(page:Int) async{
+        if let (index,view) = paginationView?.futureView(index: page),
+           await view.go(indexTo: index, options: NavigatorGoOptions(animated: false)){
+            on(.moved)
+        }
+    }
     private var reloadSpreadsContinuations = [CheckedContinuation<Void, Never>]()
     private var needsReloadSpreads = false
 

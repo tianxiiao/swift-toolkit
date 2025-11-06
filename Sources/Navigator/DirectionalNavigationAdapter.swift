@@ -97,7 +97,7 @@ public final class DirectionalNavigationAdapter {
         }
     }
 
-    private let pointerPolicy: PointerPolicy
+    private var pointerPolicy: PointerPolicy
     private let keyboardPolicy: KeyboardPolicy
     private let animatedTransition: Bool
 
@@ -118,6 +118,9 @@ public final class DirectionalNavigationAdapter {
         self.pointerPolicy = pointerPolicy
         self.keyboardPolicy = keyboardPolicy
         self.animatedTransition = animatedTransition
+    }
+    public func change(edges: Edges){
+        pointerPolicy.edges = edges
     }
 
     /// Binds the adapter to the given visual navigator.

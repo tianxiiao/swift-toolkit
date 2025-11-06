@@ -367,6 +367,11 @@ class EPUBSpreadView: UIView, Loggable, PageView {
         // The default implementation of a spread view considers that its content is entirely visible on screen.
         false
     }
+    
+    func go(indexTo index: Int, options: NavigatorGoOptions) async -> Bool {
+        // New by XX
+        false
+    }
 
     func findFirstVisibleElementLocator() async -> Locator? {
         let result = await evaluateScript("readium.findFirstVisibleLocator()")
