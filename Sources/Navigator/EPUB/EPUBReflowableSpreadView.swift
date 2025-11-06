@@ -197,11 +197,19 @@ final class EPUBReflowableSpreadView: EPUBSpreadView {
 
         return true
     }
-    override func go(indexTo index: Int, options: NavigatorGoOptions) async -> Bool {
-        let offsetX = scrollView.bounds.width * CGFloat(index)
+    override func go(indexTo index: Int, isScroll:Bool, options: NavigatorGoOptions) async -> Bool {
+        let pages = isScroll ? scrollView.contentSize.height : scrollView.contentSize.width
+        let page = isScroll ? scrollView.bounds.height : scrollView.bounds.width
+        let pageindex = isScroll ? scrollView.contentOffset.y : scrollView.contentOffset.x
+        
+        let offsetX = page * CGFloat(index)
         var newOffset = scrollView.contentOffset
-        newOffset.x = offsetX
-        guard 0 ..< scrollView.contentSize.width ~= newOffset.x else {
+        if isScroll {
+            newOffset.y = offsetX
+        } else {
+            newOffset.x = offsetX
+        }
+        guard 0 ..< pages ~= offsetX else {
             return false
         }
 

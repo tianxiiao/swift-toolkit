@@ -368,7 +368,7 @@ class EPUBSpreadView: UIView, Loggable, PageView {
         false
     }
     
-    func go(indexTo index: Int, options: NavigatorGoOptions) async -> Bool {
+    func go(indexTo index: Int, isScroll:Bool, options: NavigatorGoOptions) async -> Bool {
         // New by XX
         false
     }

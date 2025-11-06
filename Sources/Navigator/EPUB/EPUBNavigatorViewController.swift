@@ -522,7 +522,7 @@ open class EPUBNavigatorViewController: InputObservableViewController,
     }
     public func spreadMoveTo(page:Int, isScroll:Bool) async{
         if let (index,view) = paginationView?.futureView(index: page, isScroll:isScroll),
-           await view.go(indexTo: index, options: NavigatorGoOptions(animated: false)){
+           await view.go(indexTo: index, isScroll:isScroll, options: NavigatorGoOptions(animated: false)){
             on(.moved)
         }
     }
