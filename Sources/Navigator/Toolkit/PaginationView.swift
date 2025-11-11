@@ -261,6 +261,7 @@ final class PaginationView: UIView, Loggable {
                     let pages = isScroll ? spreadView.scrollView.contentSize.height : spreadView.scrollView.contentSize.width
                     let page = isScroll ? spreadView.scrollView.bounds.height : spreadView.scrollView.bounds.width
                     let pageindex = isScroll ? spreadView.scrollView.contentOffset.y : spreadView.scrollView.contentOffset.x
+                    if page ==  0 { continue }
                     if index < currentIndex {
                         count += Int(ceil(pages / page))
                     } else if index == currentIndex {
@@ -278,6 +279,7 @@ final class PaginationView: UIView, Loggable {
             if let spreadView = view as? EPUBSpreadView {
                 let pages = isScroll ? spreadView.scrollView.contentSize.height : spreadView.scrollView.contentSize.width
                 let page = isScroll ? spreadView.scrollView.bounds.height : spreadView.scrollView.bounds.width
+                if page ==  0 { continue }
                 count += Int(ceil(pages / page))
             }
         }
@@ -291,6 +293,7 @@ final class PaginationView: UIView, Loggable {
                     let pages = isScroll ? spreadView.scrollView.contentSize.height : spreadView.scrollView.contentSize.width
                     let page = isScroll ? spreadView.scrollView.bounds.height : spreadView.scrollView.bounds.width
                     let pageindex = isScroll ? spreadView.scrollView.contentOffset.y : spreadView.scrollView.contentOffset.x
+                    if page ==  0 { continue }
                     let count = cureentIndex - Int(ceil(pages / page))
                     if count <= 0  {
                         setCurrentIndex(index,location: .start)
@@ -301,6 +304,34 @@ final class PaginationView: UIView, Loggable {
             }
         }
         return nil
+    }
+    public func isPageEnd(isScroll:Bool) -> Bool{
+        var isEnd = false
+        for (index, view) in loadedViews {
+            if let spreadView = view as? EPUBSpreadView {
+                let pages = isScroll ? spreadView.scrollView.contentSize.height : spreadView.scrollView.contentSize.width
+                if pages != 0 {
+                    let page = isScroll ? spreadView.scrollView.bounds.height : spreadView.scrollView.bounds.width
+                    let pageindex = isScroll ? spreadView.scrollView.contentOffset.y : spreadView.scrollView.contentOffset.x
+                    isEnd = (pages <= pageindex + page)
+                }
+            }
+        }
+        return isEnd
+    }
+    public func isPageTop(isScroll:Bool) -> Bool{
+        var isTop = false
+        for (index, view) in loadedViews {
+            if let spreadView = view as? EPUBSpreadView {
+                let pages = isScroll ? spreadView.scrollView.contentSize.height : spreadView.scrollView.contentSize.width
+                if pages != 0 {
+                    let page = isScroll ? spreadView.scrollView.bounds.height : spreadView.scrollView.bounds.width
+                    let pageindex = isScroll ? spreadView.scrollView.contentOffset.y : spreadView.scrollView.contentOffset.x
+                    isTop = pageindex <= 0
+                }
+            }
+        }
+        return isTop
     }
 
     /// Queue views to be loaded until reaching the given number of pre-loaded positions.

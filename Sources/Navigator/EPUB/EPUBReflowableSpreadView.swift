@@ -36,7 +36,7 @@ final class EPUBReflowableSpreadView: EPUBSpreadView {
     override func setupWebView() {
         super.setupWebView()
 
-        scrollView.bounces = false
+//        scrollView.bounces = false
         // Since iOS 16, the default value of alwaysBounceX seems to be true
         // for web views.
         scrollView.alwaysBounceVertical = false
@@ -374,7 +374,7 @@ final class EPUBReflowableSpreadView: EPUBSpreadView {
     }
 
     @objc private func notifyPagesDidChange() {
-        guard previousProgression != progression else {
+        guard progression?.lowerBound == 0.0 || progression?.upperBound == 1.0 || previousProgression != progression else {
             return
         }
         previousProgression = nil

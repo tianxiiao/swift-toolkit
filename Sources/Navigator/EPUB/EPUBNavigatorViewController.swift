@@ -526,6 +526,18 @@ open class EPUBNavigatorViewController: InputObservableViewController,
             on(.moved)
         }
     }
+    public func isEnd(isScroll:Bool) -> Bool{
+        if let isEnd = paginationView?.isPageEnd(isScroll:isScroll){
+            return isEnd
+        }
+        return false
+    }
+    public func isTop(isScroll:Bool) -> Bool{
+        if let isTop = paginationView?.isPageTop(isScroll:isScroll){
+            return isTop
+        }
+        return false
+    }
     private var reloadSpreadsContinuations = [CheckedContinuation<Void, Never>]()
     private var needsReloadSpreads = false
 
@@ -712,7 +724,7 @@ open class EPUBNavigatorViewController: InputObservableViewController,
     private lazy var updateCurrentLocation = execute(
         // If we're not in an `idle` state, we postpone the notification.
         when: { [weak self] in self?.state == .idle },
-        pollingInterval: 0.1
+        pollingInterval: 0.01
     ) { [weak self] in
         guard let self = self else {
             return
@@ -722,8 +734,8 @@ open class EPUBNavigatorViewController: InputObservableViewController,
 
         if
             let delegate = delegate,
-            let location = currentLocation,
-            location != notifiedCurrentLocation
+            let location = currentLocation
+//                ,location != notifiedCurrentLocation
         {
             notifiedCurrentLocation = location
             delegate.navigator(self, locationDidChange: location)
